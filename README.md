@@ -1,4 +1,3 @@
-# zoko
 # 🚀 Zoko Server
 
 ## 📜 Description
@@ -69,6 +68,16 @@ git clone https://github.com/joejosephvarghese/zoko.git
    ```sh
    make run || go run ./cmd/api/main.go
    ```
+
+---
+
+## 📖 API Documentation
+
+📄 **Swagger UI:**
+
+Access the API documentation at:
+
+🔗 [Swagger UI](http://localhost:8080/swagger/index.html)
 
 ---
 
