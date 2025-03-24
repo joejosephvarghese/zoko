@@ -34,7 +34,7 @@ The backend handles communication and data processing using **Socket.IO**, ensur
 
 Ensure that you have the following software installed on your system:
 
-🟡 **Go** (v1.16 or above)
+🟡 **Go** (go version go1.24.1)
 
 ---
 
