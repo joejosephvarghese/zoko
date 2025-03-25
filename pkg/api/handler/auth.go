@@ -72,17 +72,6 @@ func (c *AuthHandler) UserLogin(ctx *gin.Context) {
 	c.setupTokenAndResponse(ctx, token.User, userID)
 }
 
-// UserGoogleLogin godoc
-// @Summary Login with google (User)
-// @Description API for user to login with google
-// @Security ApiKeyAuth
-// @Id UserGoogleLogin
-// @Tags User Authentication
-// @Param        inputs   body     request.GoogleLogin{}   true  "Google Token Input"
-// @Router /auth/google-sign-in [post]
-// @Success 200 {object} response.Response{data=response.TokenResponse{}} "Successfully logged in with google"
-// @Failure 400 {object} response.Response{}  "Invalid inputs"
-// @Failure 500 {object} response.Response{}  "Failed to login"
 func (c *AuthHandler) UserGoogleLogin(ctx *gin.Context) {
 	var body request.GoogleLogin
 

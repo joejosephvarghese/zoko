@@ -11,7 +11,6 @@ import (
 
 // ConnectDatabase initializes and returns a new gorm DB instance
 func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
-
 	dsn := fmt.Sprintf("host=%s user=%s dbname=%s port=%s password=%s", cfg.DBHost, cfg.DBUser, cfg.DBName, cfg.DBPort, cfg.DBPassword)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
@@ -19,10 +18,26 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 	})
 
 	if err != nil {
+		fmt.Println("❌ Database connection failed:", err)
 		return nil, err
 	}
 
-	// migrate the database tables
+	// Check if DB connection is working
+	sqlDB, err := db.DB()
+	if err != nil {
+		fmt.Println("❌ Failed to get database instance:", err)
+		return nil, err
+	}
+
+	err = sqlDB.Ping()
+	if err != nil {
+		fmt.Println("❌ Database ping failed:", err)
+		return nil, err
+	}
+
+	fmt.Println("✅ Database connected successfully!")
+
+	// Migrate tables
 	err = db.AutoMigrate(
 		domain.User{},
 		domain.RefreshSession{},
@@ -31,8 +46,11 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 	)
 
 	if err != nil {
+		fmt.Println("❌ Migration failed:", err)
 		return nil, err
 	}
 
-	return db, err
+	fmt.Println("✅ Migration successful!")
+
+	return db, nil
 }
