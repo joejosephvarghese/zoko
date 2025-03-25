@@ -1,4 +1,3 @@
-# zoko
 # 🚀 Zoko Server
 
 ## 📜 Description
@@ -35,7 +34,7 @@ The backend handles communication and data processing using **Socket.IO**, ensur
 
 Ensure that you have the following software installed on your system:
 
-🟡 **Go** (v1.16 or above)
+🟡 **Go** (go version go1.24.1)
 
 ---
 
@@ -69,6 +68,16 @@ git clone https://github.com/joejosephvarghese/zoko.git
    ```sh
    make run || go run ./cmd/api/main.go
    ```
+
+---
+
+## 📖 API Documentation
+
+📄 **Swagger UI:**
+
+Access the API documentation at:
+
+🔗 [Swagger UI](http://localhost:8080/swagger/index.html)
 
 ---
 
