@@ -16,9 +16,9 @@ const (
 	// Users
 	UsersURL = BaseURL + "/users"
 
-	// Friends
-	UserFriendsURL        = UsersURL + "friends"
-	UserFriendsRequestUrl = UserFriendsURL + "/request"
+	// // Friends
+	// UserFriendsURL        = UsersURL + "friends"
+	// UserFriendsRequestUrl = UserFriendsURL + "/request"
 
 	// Chats
 	ChatsURL       = BaseURL + "/chats"

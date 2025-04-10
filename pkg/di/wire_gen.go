@@ -13,6 +13,7 @@ import (
 	"github.com/joejosephvarghese/message/server/pkg/api/service"
 	"github.com/joejosephvarghese/message/server/pkg/config"
 	"github.com/joejosephvarghese/message/server/pkg/db"
+	"github.com/joejosephvarghese/message/server/pkg/kafka"
 	"github.com/joejosephvarghese/message/server/pkg/repository"
 	"github.com/joejosephvarghese/message/server/pkg/service/google"
 	"github.com/joejosephvarghese/message/server/pkg/service/token"
@@ -37,7 +38,8 @@ func InitializeAPI(cfg config.Config) (*http.Server, error) {
 	userHandler := handler.NewUserHandler(userUseCase)
 	chatRepository := repository.NewChatRepository(gormDB)
 	chatUseCase := usecase.NewChatUseCase(chatRepository)
-	chatHandler := handler.NewChatHandler(chatUseCase)
+	prodInterInterface := kafka.NewProducer(cfg)
+	chatHandler := handler.NewChatHandler(chatUseCase, prodInterInterface)
 	webSocketService := socket.NewWebSocketService(tokenService)
 	server := http.NewServerHTTP(cfg, authHandler, middlewareMiddleware, userHandler, chatHandler, webSocketService)
 	return server, nil

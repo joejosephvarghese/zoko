@@ -20,11 +20,14 @@ type Config struct {
 	JwtKey             string `mapstructure:"JWT_KEY" validate:"required"`
 	GoAuthClientId     string `mapstructure:"GOAUTH_CLIENT_ID"`
 	GoAuthClientSecret string `mapstructure:"GOAUTH_CLIENT_SECRET"`
+	BrokerAddress      string `mapstructure:"BROKER_ADDRESS"`
+	Topic              string `mapstructure:"TOPIC"`
+	GroupID            string `mapstructure:"GROUP_ID"`
 }
 
 // List of required environment variables
 var envs = []string{
-	"PORT", "DB_HOST", "DB_NAME", "DB_USER", "DB_PORT", "DB_PASSWORD", "JWT_KEY",
+	"PORT", "DB_HOST", "DB_NAME", "DB_USER", "DB_PORT", "DB_PASSWORD", "JWT_KEY", "BROKER_ADDRESS", "TOPIC", "GROUP_ID",
 }
 
 // LoadConfig initializes configuration

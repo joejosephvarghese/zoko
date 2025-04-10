@@ -43,7 +43,9 @@ func (c *AuthHandler) UserLogin(ctx *gin.Context) {
 	var body request.Login
 
 	if err := ctx.ShouldBindJSON(&body); err != nil {
+
 		response.ErrorResponse(ctx, http.StatusBadRequest, BindJsonFailMessage, err, body)
+
 		return
 	}
 

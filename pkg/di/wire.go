@@ -10,6 +10,7 @@ import (
 	socket "github.com/joejosephvarghese/message/server/pkg/api/service"
 	"github.com/joejosephvarghese/message/server/pkg/config"
 	"github.com/joejosephvarghese/message/server/pkg/db"
+	"github.com/joejosephvarghese/message/server/pkg/kafka"
 	"github.com/joejosephvarghese/message/server/pkg/repository"
 	"github.com/joejosephvarghese/message/server/pkg/service/google"
 	"github.com/joejosephvarghese/message/server/pkg/service/token"
@@ -22,7 +23,7 @@ func InitializeAPI(cfg config.Config) (*http.Server, error) {
 
 	wire.Build(
 		db.ConnectDatabase,
-
+		kafka.NewProducer,
 		token.NewTokenService,
 		google.NewGoogleAuth,
 		middleware.NewMiddleware,

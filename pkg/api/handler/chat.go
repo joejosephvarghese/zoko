@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -9,16 +10,19 @@ import (
 	"github.com/joejosephvarghese/message/server/pkg/api/handler/request"
 	"github.com/joejosephvarghese/message/server/pkg/api/handler/response"
 	"github.com/joejosephvarghese/message/server/pkg/domain"
+	producerinterface "github.com/joejosephvarghese/message/server/pkg/kafka/producerInterface"
 	usecase "github.com/joejosephvarghese/message/server/pkg/usecase/interfaces"
 )
 
 type chatHandler struct {
-	usecase usecase.ChatUseCase
+	usecase  usecase.ChatUseCase
+	producer producerinterface.ProdInterInterface
 }
 
-func NewChatHandler(usecase usecase.ChatUseCase) interfaces.ChatHandler {
+func NewChatHandler(usecase usecase.ChatUseCase, producer producerinterface.ProdInterInterface) interfaces.ChatHandler {
 	return &chatHandler{
-		usecase: usecase,
+		usecase:  usecase,
+		producer: producer,
 	}
 }
 
@@ -108,13 +112,14 @@ func (c *chatHandler) GetAllMessages(ctx *gin.Context) {
 	userID := request.GetUserIdFromContext(ctx)
 
 	messages, err := c.usecase.FindAllMessagesOfUserForAChat(ctx, chatID, userID, pagination)
-
+	fmt.Print(messages)
 	if err != nil {
 		response.ErrorResponse(ctx, http.StatusInternalServerError, "Failed to retrieve message for this chat", err, nil)
 	}
 
 	if len(messages) == 0 {
-		response.SuccessResponse(ctx, http.StatusNoContent, "There is no message between users", err)
+		response.ErrorResponse(ctx, http.StatusNoContent, "There is no message between users", err, nil)
+		return
 	}
 
 	response.SuccessResponse(ctx, http.StatusOK, "Successfully retrieved message for the chat", messages)
@@ -138,6 +143,7 @@ func (c *chatHandler) SaveMessage(ctx *gin.Context) {
 		response.ErrorResponse(ctx, http.StatusBadRequest, BindParamFailMessage, err, nil)
 		return
 	}
+
 	var body request.Message
 	if err := ctx.ShouldBindJSON(&body); err != nil {
 		response.ErrorResponse(ctx, http.StatusBadRequest, BindJsonFailMessage, err, nil)
@@ -149,12 +155,25 @@ func (c *chatHandler) SaveMessage(ctx *gin.Context) {
 		SenderID: request.GetUserIdFromContext(ctx),
 		Content:  body.Content,
 	}
-
-	_, err = c.usecase.SaveMessage(ctx, message)
+	// 🔥 Marshal the struct to JSON bytes
+	msgBytes, err := json.Marshal(message)
 	if err != nil {
-		response.ErrorResponse(ctx, http.StatusInternalServerError, "Failed to save message", err, nil)
+		response.ErrorResponse(ctx, http.StatusInternalServerError, "Failed to marshal message", err, nil)
 		return
 	}
+
+	key := "message"
+	if err := c.producer.Send(ctx, key, msgBytes); err != nil {
+		response.ErrorResponse(ctx, http.StatusInternalServerError, "Failed to send Kafka message", err, nil)
+		return
+	}
+	// go c.goroute(ctx, message)
+	// _, err = c.usecase.SaveMessage(ctx, message)
+	// if err != nil {
+	// 	response.ErrorResponse(ctx, http.StatusInternalServerError, "Failed to save message", err, nil)
+	// 	return
+	// }
+
 	// // send the message to the receiver
 	// received := c.socketService.SendMessage(receiverID, service.Message{
 	// 	ChatID:  chatID,
@@ -167,3 +186,7 @@ func (c *chatHandler) SaveMessage(ctx *gin.Context) {
 	// }
 	response.SuccessResponse(ctx, http.StatusCreated, "Successfully message saved", nil)
 }
+
+// func (c *chatHandler) goroute(ctx *gin.Context, mesage domain.Message) {
+// 	c.usecase.SaveMessage(ctx, mesage)
+// }

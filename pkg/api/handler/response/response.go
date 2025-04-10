@@ -2,7 +2,6 @@ package response
 
 import (
 	"log"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,8 +13,8 @@ type Response struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
-func SuccessResponse(ctx *gin.Context, statusCode int, message string, data interface{}) {
-
+func SuccessResponse(ctx *gin.Context, statusCode int, message string, data any) {
+	print("hit here")
 	log.Printf("\033[0;32m%s\033[0m\n", message)
 
 	response := Response{
@@ -27,17 +26,29 @@ func SuccessResponse(ctx *gin.Context, statusCode int, message string, data inte
 	ctx.JSON(statusCode, response)
 }
 
-func ErrorResponse(ctx *gin.Context, statusCode int, message string, err error, data interface{}) {
+func ErrorResponse(ctx *gin.Context, statusCode int, message string, err error, data any) {
+	print("hit here")
+	// log.Printf("\033[0;31m%s\033[0m\n", err.Error())
 
-	log.Printf("\033[0;31m%s\033[0m\n", err.Error())
-
-	errFields := strings.Split(err.Error(), "\n")
+	// errFields := strings.Split(err.Error(), "\n")
 	response := Response{
 		Status:  false,
-		Message: message,
-		Error:   errFields,
+		Message: "",
+		Error:   nil,
 		Data:    data,
 	}
 
+	ctx.JSON(statusCode, response)
+}
+func NoContentResponse(ctx *gin.Context, statusCode int, message string, data any) {
+	print("hit here")
+	log.Printf("\033[0;32m%s\033[0m\n", message)
+
+	response := Response{
+		Status:  true,
+		Message: "no content",
+		Error:   nil,
+		Data:    data,
+	}
 	ctx.JSON(statusCode, response)
 }

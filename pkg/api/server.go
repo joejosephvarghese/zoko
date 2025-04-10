@@ -47,5 +47,6 @@ func (c *Server) Start() error {
 		log.Println("Defaulting to port 8080")
 	}
 	log.Println("Starting server on port:", port)
+
 	return c.engine.Run(":" + port)
 }
