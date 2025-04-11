@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joejosephvarghese/message/server/pkg/api/handler/interfaces"
@@ -162,7 +163,8 @@ func (c *chatHandler) SaveMessage(ctx *gin.Context) {
 		return
 	}
 
-	key := "message"
+	key := strconv.Itoa(int(chatID))
+
 	if err := c.producer.Send(ctx, key, msgBytes); err != nil {
 		response.ErrorResponse(ctx, http.StatusInternalServerError, "Failed to send Kafka message", err, nil)
 		return

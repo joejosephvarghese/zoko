@@ -27,6 +27,7 @@ func NewProducer(cfg config.Config) producerinterface.ProdInterInterface {
 
 // Send sends a Kafka message
 func (p *Producer) Send(ctx context.Context, key string, value []byte) error {
+
 	err := p.writer.WriteMessages(ctx,
 		kafka.Message{
 			Key:   []byte(key),
